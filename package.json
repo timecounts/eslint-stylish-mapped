@@ -1,0 +1,16 @@
+{
+  "name": "eslint-stylish-mapped",
+  "version": "1.0.0",
+  "description": "eslint-stylish but with source map support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Benjie Gillam <code@benjiegillam.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "source-map": "^0.4.2",
+    "text-table": "^0.2.0"
+  }
+}
