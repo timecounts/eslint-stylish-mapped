@@ -94,13 +94,44 @@ function pluralize(word, count) {
 // Public Interface
 //------------------------------------------------------------------------------
 
-module.exports = function(results) {
+module.exports = function(originalResults) {
 
   var output = "\n",
     total = 0,
     errors = 0,
     warnings = 0,
     summaryColor = "yellow";
+
+  var mapSource = mapSourcePosition;
+  var dataUrlPrefix = "data:application/json;base64,";
+
+  var messagesByFilePath = {};
+  originalResults.forEach(function(originalResult) {
+    var messages = originalResult.messages;
+    messages.forEach(function(originalMessage) {
+      var position = mapSource({
+        source: path.resolve(originalResult.filePath),
+        line: originalMessage.line,
+        column: originalMessage.column
+      });
+      if (!messagesByFilePath[position.source]) {
+        messagesByFilePath[position.source] = [];
+      }
+      var message = JSON.parse(JSON.stringify(originalMessage));
+      message.line = position.line;
+      message.column = position.column;
+      messagesByFilePath[position.source].push(message);
+    });
+  });
+
+  var filePaths = Object.keys(messagesByFilePath).sort();
+  var results = filePaths.map(function(filePath) {
+    var prettyPath = path.relative(process.cwd(), filePath);
+    return {
+      filePath: prettyPath,
+      messages: messagesByFilePath[filePath]
+    };
+  });
 
   results.forEach(function(result) {
     var messages = result.messages;
